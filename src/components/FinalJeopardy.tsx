@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FinalRound } from "../types";
 import MediaClip, { mediaLabel } from "./MediaClip";
 
@@ -12,6 +12,8 @@ function FinalJeopardy(props: FinalJeopardyProps) {
 
   const [category, setCategory] = useState(true);
   const [solution, setSolution] = useState(false);
+  const [themeStarted, setThemeStarted] = useState(false);
+  const themeAudio = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     document.addEventListener("keydown", clueKeyPress);
@@ -20,22 +22,45 @@ function FinalJeopardy(props: FinalJeopardyProps) {
     };
   });
 
+  useEffect(() => {
+    const audio = new Audio(`${process.env.PUBLIC_URL}/final_jeopardy.mp3`);
+    themeAudio.current = audio;
+    return () => {
+      audio.pause();
+      themeAudio.current = null;
+    };
+  }, []);
+
   function showClue() {
     setCategory(false);
     setSolution(false);
+    setThemeStarted(false);
+  }
+
+  function playTheme() {
+    setThemeStarted(true);
+    themeAudio.current?.play();
   }
 
   function toggleSolution() {
     setSolution(!solution);
   }
 
+  function clueClick() {
+    if (category) {
+      showClue();
+    } else if (solution) {
+      onFinishGame();
+    } else if (!themeStarted) {
+      playTheme();
+    } else {
+      toggleSolution();
+    }
+  }
+
   function clueKeyPress(event: KeyboardEvent) {
     if (event.key === " " || event.key === "Enter") {
-      if (category) {
-        showClue();
-      } else {
-        toggleSolution();
-      }
+      clueClick();
     } else if (event.key === "Escape" && !category && solution) {
       onFinishGame();
     }
@@ -49,7 +74,7 @@ function FinalJeopardy(props: FinalJeopardyProps) {
     );
   }
   return (
-    <div onClick={solution ? onFinishGame : toggleSolution} className="clue">
+    <div onClick={clueClick} className="clue">
       <div className="clue-category-label">
         {final.category} {mediaLabel(final)}
       </div>
