@@ -87,6 +87,11 @@ function Scoreboard(props: ScoreboardProps) {
     clueValue: number,
     correct: boolean
   ) {
+    new Audio(
+      `${process.env.PUBLIC_URL}/${
+        correct ? "correct_answer" : "incorrect_answer"
+      }.mp3`
+    ).play();
     setWagers(
       wagers.map((existingWager, wagerIndex) =>
         wagerIndex === i ? "" : existingWager
