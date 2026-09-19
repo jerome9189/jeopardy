@@ -13,12 +13,18 @@
       - A `solution` key that contains the solution
       - An optional `dailyDouble` key, set to `true` if the clue is a daily double
       - An optional `html` tag to treat the clue and solution text as HTML
+      - Optional media clip keys, each containing a URL to the clip:
+        - An `image` key to display an image with the clue
+        - An `audio` key to play an audio clip with the clue
+        - A `video` key to display a video clip with the clue
       - An optional `chosen` key, set to `true` if the clue has already been chosen (should be omitted if starting game from the beginning)
   - A `double` key that contains an array of categories, structured like the `single` round.
   - A `final` key that contains an object with:
     - A `category` key that contains the Final Jeopardy category
     - A `clue` key that contains the Final Jeopardy clue
     - A `solution` key that contains the Final Jeopardy solution
+    - An optional `html` tag to treat the clue and solution text as HTML
+    - Optional media clip keys (`image`, `audio`, `video`) containing URLs to clips, as with regular clues
 - An optional `players` key that contains an array of players, where each player is an object containing:
   - A `name` key with the player's name
   - A `score` key with the player's score (should initially be 0)

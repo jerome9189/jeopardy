@@ -35,12 +35,24 @@ export interface Category {
   clues: Clue[];
 }
 
+export interface MediaClipData {
+  // URLs of optional media clips attached to a clue
+  image: string | undefined;
+  audio: string | undefined;
+  video: string | undefined;
+}
+
 export interface Clue {
   value: number;
   clue: string;
   solution: string;
   dailyDouble: boolean | undefined;
   html: boolean | undefined;
+
+  // URLs of optional media clips
+  image: string | undefined;
+  audio: string | undefined;
+  video: string | undefined;
 
   // Tracks whether the clue has already been played
   chosen: boolean | undefined;
@@ -51,4 +63,9 @@ export interface FinalRound {
   clue: string;
   solution: string;
   html: boolean | undefined;
+
+  // URLs of optional media clips
+  image: string | undefined;
+  audio: string | undefined;
+  video: string | undefined;
 }
