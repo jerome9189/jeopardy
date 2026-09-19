@@ -97,6 +97,14 @@ td.board-clue {
   padding: 20px;
 }
 
+.clue-display-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+
 .final-category {
   font-family: "Swiss921", sans-serif;
   font-size: 90px;

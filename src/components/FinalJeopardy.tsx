@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FinalRound } from "../types";
+import MediaClip, { mediaLabel } from "./MediaClip";
 
 interface FinalJeopardyProps {
   final: FinalRound;
@@ -49,18 +50,28 @@ function FinalJeopardy(props: FinalJeopardyProps) {
   }
   return (
     <div onClick={solution ? onFinishGame : toggleSolution} className="clue">
+      <div className="clue-category-label">
+        {final.category} {mediaLabel(final)}
+      </div>
       <div className="clue-display">
-        {final.html === true ? (
-          <div
-            dangerouslySetInnerHTML={{
-              __html: solution ? final.solution : final.clue,
-            }}
+        <div className="clue-display-content">
+          <MediaClip
+            image={final.image}
+            audio={final.audio}
+            video={final.video}
           />
-        ) : solution ? (
-          final.solution
-        ) : (
-          final.clue
-        )}
+          {final.html === true ? (
+            <div
+              dangerouslySetInnerHTML={{
+                __html: solution ? final.solution : final.clue,
+              }}
+            />
+          ) : solution ? (
+            final.solution
+          ) : (
+            final.clue
+          )}
+        </div>
       </div>
     </div>
   );

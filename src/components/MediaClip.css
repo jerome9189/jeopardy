@@ -1,0 +1,30 @@
+.media-clip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.media-clip-label {
+  font-family: "Swiss921", sans-serif;
+  text-transform: uppercase;
+  font-size: 28px;
+  color: #c99f57;
+}
+
+.media-image {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.media-audio {
+  width: 300px;
+}
+
+.media-video {
+  max-width: 100%;
+  max-height: 400px;
+}

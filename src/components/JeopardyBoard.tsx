@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Clue, GameRound } from "../types";
+import MediaClip, { mediaLabel } from "./MediaClip";
 import "./JeopardyBoard.css";
 
 interface JeopardyBoardProps {
@@ -64,7 +65,7 @@ function JeopardyBoard(props: JeopardyBoardProps) {
         className="clue"
       >
         <div className="clue-category-label">
-          {categoryName} - ${clue.value}
+          {categoryName} - ${clue.value} {mediaLabel(clue)}
         </div>
         <div
           className={
@@ -74,16 +75,25 @@ function JeopardyBoard(props: JeopardyBoardProps) {
           <br />
           {showDailyDoubleScreen ? (
             "Daily Double"
-          ) : clue.html === true ? (
-            <div
-              dangerouslySetInnerHTML={{
-                __html: solution ? clue.solution : clue.clue,
-              }}
-            />
-          ) : solution ? (
-            clue.solution
           ) : (
-            clue.clue
+            <div className="clue-display-content">
+              <MediaClip
+                image={clue.image}
+                audio={clue.audio}
+                video={clue.video}
+              />
+              {clue.html === true ? (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: solution ? clue.solution : clue.clue,
+                  }}
+                />
+              ) : solution ? (
+                clue.solution
+              ) : (
+                clue.clue
+              )}
+            </div>
           )}
         </div>
       </div>
