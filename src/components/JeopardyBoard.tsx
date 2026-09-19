@@ -36,6 +36,17 @@ function JeopardyBoard(props: JeopardyBoardProps) {
     };
   });
 
+  useEffect(() => {
+    if (
+      currentCategory !== null &&
+      currentClue !== null &&
+      board[currentCategory].clues[currentClue].dailyDouble &&
+      !dailyDoubleScreenPresented
+    ) {
+      new Audio(`${process.env.PUBLIC_URL}/daily_double.mp3`).play();
+    }
+  }, [currentCategory, currentClue, dailyDoubleScreenPresented, board]);
+
   function renderCategory(index: number) {
     return (
       <div onClick={categoryShown} className="category-container">
