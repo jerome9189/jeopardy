@@ -81,6 +81,17 @@ td.board-clue {
   padding-right: 10px;
 }
 
+.clue.zoom-in-progress .clue-category-label,
+.clue.zoom-in-progress .clue-text {
+  opacity: 0;
+}
+
+.clue:not(.zoom-in-progress) .clue-category-label,
+.clue:not(.zoom-in-progress) .clue-text-visible {
+  opacity: 1;
+  transition: opacity 350ms ease;
+}
+
 .clue-display {
   background-color: #001699;
   display: flex;
