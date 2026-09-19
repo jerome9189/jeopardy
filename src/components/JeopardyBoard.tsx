@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { Clue, GameRound } from "../types";
 import MediaClip, { mediaLabel } from "./MediaClip";
 import "./JeopardyBoard.css";
+
+interface ClueOrigin {
+  x: number;
+  y: number;
+}
 
 interface JeopardyBoardProps {
   backToBoard: () => void;
@@ -28,6 +33,33 @@ function JeopardyBoard(props: JeopardyBoardProps) {
   const [solution, setSolution] = useState(false);
   const [dailyDoubleScreenPresented, setDailyDoubleScreenPresented] =
     useState(false);
+  const clueRef = useRef<HTMLDivElement | null>(null);
+  const [clueOrigin, setClueOrigin] = useState<ClueOrigin | null>(null);
+  const [zoomComplete, setZoomComplete] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = clueRef.current;
+    if (el === null || currentCategory === null || currentClue === null) {
+      return;
+    }
+    if (clueOrigin === null) {
+      setZoomComplete(true);
+      return;
+    }
+
+    setZoomComplete(false);
+    const originX = clueOrigin.x;
+    const originY = clueOrigin.y;
+    const animation = el.animate(
+      [
+        { transform: "scale(0)", transformOrigin: `${originX}px ${originY}px` },
+        { transform: "scale(1)", transformOrigin: `${originX}px ${originY}px` },
+      ],
+      { duration: 975, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "both" }
+    );
+    animation.onfinish = () => setZoomComplete(true);
+    return () => animation.cancel();
+  }, [currentCategory, currentClue, clueOrigin]);
 
   useEffect(() => {
     document.addEventListener("keydown", clueKeyPress);
@@ -35,17 +67,6 @@ function JeopardyBoard(props: JeopardyBoardProps) {
       document.removeEventListener("keydown", clueKeyPress);
     };
   });
-
-  useEffect(() => {
-    if (
-      currentCategory !== null &&
-      currentClue !== null &&
-      board[currentCategory].clues[currentClue].dailyDouble &&
-      !dailyDoubleScreenPresented
-    ) {
-      new Audio(`${process.env.PUBLIC_URL}/daily_double.mp3`).play();
-    }
-  }, [currentCategory, currentClue, dailyDoubleScreenPresented, board]);
 
   function renderCategory(index: number) {
     return (
@@ -73,7 +94,8 @@ function JeopardyBoard(props: JeopardyBoardProps) {
             ? returnToBoard
             : toggleSolution
         }
-        className="clue"
+        ref={clueRef}
+        className={"clue" + (zoomComplete ? "" : " clue-zoom-in-progress")}
       >
         <div className="clue-category-label">
           {categoryName} - ${clue.value} {mediaLabel(clue)}
@@ -83,29 +105,34 @@ function JeopardyBoard(props: JeopardyBoardProps) {
             showDailyDoubleScreen ? "clue-display daily-double" : "clue-display"
           }
         >
-          <br />
-          {showDailyDoubleScreen ? (
-            "Daily Double"
-          ) : (
-            <div className="clue-display-content">
-              <MediaClip
-                image={clue.image}
-                audio={clue.audio}
-                video={clue.video}
-              />
-              {clue.html === true ? (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: solution ? clue.solution : clue.clue,
-                  }}
+          <div
+            className={
+              zoomComplete ? "clue-text clue-text-visible" : "clue-text"
+            }
+          >
+            {showDailyDoubleScreen ? (
+              "Daily Double"
+            ) : (
+              <div className="clue-display-content">
+                <MediaClip
+                  image={clue.image}
+                  audio={clue.audio}
+                  video={clue.video}
                 />
-              ) : solution ? (
-                clue.solution
-              ) : (
-                clue.clue
-              )}
-            </div>
-          )}
+                {clue.html === true ? (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: solution ? clue.solution : clue.clue,
+                    }}
+                  />
+                ) : solution ? (
+                  clue.solution
+                ) : (
+                  clue.clue
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -145,6 +172,7 @@ function JeopardyBoard(props: JeopardyBoardProps) {
   function returnToBoard() {
     setSolution(false);
     setDailyDoubleScreenPresented(false);
+    setClueOrigin(null);
     backToBoard();
   }
 
@@ -189,7 +217,20 @@ function JeopardyBoard(props: JeopardyBoardProps) {
                   return (
                     <td
                       key={i}
-                      onClick={() => chooseClue(i, j)}
+                      onClick={(event) => {
+                        const rect =
+                          event.currentTarget.getBoundingClientRect();
+                        setClueOrigin({
+                          x: rect.left + rect.width / 2,
+                          y: rect.top + rect.height / 2,
+                        });
+                        if (category.clues[j].dailyDouble) {
+                          new Audio(
+                            `${process.env.PUBLIC_URL}/daily_double.mp3`
+                          ).play();
+                        }
+                        chooseClue(i, j);
+                      }}
                       className="board-clue"
                     >
                       ${category.clues[j].value}
