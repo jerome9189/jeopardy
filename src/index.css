@@ -7,3 +7,13 @@
   font-family: "Korinna";
   src: local("Korinna"), url(./fonts/korinna.ttf) format("truetype");
 }
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
