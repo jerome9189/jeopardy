@@ -232,7 +232,7 @@ function App() {
   } else if (round === "final") {
     const final = game.final;
     return (
-      <div>
+      <div className="app">
         <FinalJeopardy final={final} onFinishGame={finishGame} />
         <Scoreboard
           players={players}

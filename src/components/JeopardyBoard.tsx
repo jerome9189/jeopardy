@@ -195,7 +195,7 @@ function JeopardyBoard(props: JeopardyBoardProps) {
   }
 
   return (
-    <div>
+    <div className="board-container">
       <table>
         <thead>
           <tr>
